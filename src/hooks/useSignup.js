@@ -1,9 +1,11 @@
 import { auth } from "../firebase/config";
+import { useAuthContext } from "./useAuthContext";
 import { useState } from "react";
 
 export const useSignup = () => {
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
+  const { dispatch } = useAuthContext();
 
   const signup = async (displayName, email, password) => {
     setIsPending(true);
@@ -16,6 +18,8 @@ export const useSignup = () => {
       }
 
       await res.user.updateProfile({ displayName });
+      dispatch({ type: "LOGIN", payload: res.user });
+
       setIsPending(false);
     } catch (err) {
       setError(err.message);
